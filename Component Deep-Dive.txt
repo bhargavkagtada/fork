@@ -1,0 +1,147 @@
+Component Deep-Dive
+1. Azure Functions (Python v2, Blueprint Model)
+Location: function_app.py
+Role: Entry point for all serverless logic. Registers blueprints for modular function organization.
+Features: Durable orchestrators (sync, yield), async activities, logging, environment-based secrets.
+Integration: Connects to data layer, agents, and external Azure resources.
+2. Data Layer (Cosmos DB)
+Location: cosmos_ops.py
+Role: Handles all database operations (CRUD, queries) for persistent storage.
+Integration: Used by Azure Functions for data access. Provisioned via cosmos-db.bicep.
+3. Agents & Tools
+Location: agents
+Role: Modular utilities for code style enforcement (code_style.py), deep wiki management (deep_wiki.py), and vector search (tools/vector_search.py).
+Integration: Invoked by Azure Functions or other components as needed.
+4. Infrastructure-as-Code (IaC)
+Location: infra
+Role: Bicep templates for provisioning all Azure resources (Function App, Cosmos DB, Cognitive Services, RBAC, Monitoring).
+Integration: Deployed via Azure Developer CLI (azd). Ensures reproducible cloud environments.
+5. Configuration & Environment
+Location: local.settings.example.json, scripts/generate-settings.*
+Role: Manages environment variables, secrets, and settings for local and cloud deployments.
+Integration: Used by Azure Functions and agents for secure configuration.
+6. Testing
+Location: tests
+Role: Automated tests using pytest and pytest-asyncio. Mocks Azure SDK calls for coverage.
+Integration: Validates all business logic and integrations.
+7. Documentation & Metadata
+Location: Root files (README.md, deep-wiki.md, etc.)
+Role: Provides usage, contribution, and change history information.
+
+[ VS Code Workspace ]
+      |
+      v
+[ src/ ]
+  |-- function_app.py (Azure Functions entry)
+  |     |-- Registers blueprints
+  |     |-- Orchestrators & activities
+  |     |-- Logging & secrets
+  |
+  |-- agents/
+  |     |-- code_style.py (Code style enforcement)
+  |     |-- deep_wiki.py (Wiki management)
+  |     |-- tools/vector_search.py (Vector search)
+  |
+  |-- data/
+  |     |-- cosmos_ops.py (Cosmos DB operations)
+  |
+  |-- tests/
+  |     |-- pytest & pytest-asyncio tests
+  |
+  v
+[ infra/ ] (Bicep templates)
+  |-- main.bicep, main.parameters.json (Root deployment)
+  |-- app/ (API, Cosmos DB, Monitoring)
+  |-- ai/ (Cognitive Services, AI project)
+  |-- rbac/ (Access control)
+  |-- util/ (Utilities)
+  |
+  v
+[ Azure Cloud ]
+  |-- Function App (Serverless logic)
+  |-- Cosmos DB (Data storage)
+  |-- Cognitive Services (AI capabilities)
+  |-- App Insights (Monitoring)
+  |-- RBAC (Access control)
+  |
+  v
+[ External Integrations ]
+  |-- Logging
+  |-- Secrets (os.environ)
+  |
+  v
+[ Configuration & Environment ]
+  |-- local.settings.example.json
+  |-- generate-settings scripts
+  |
+  v
+[ Documentation & Metadata ]
+  |-- README.md, deep-wiki.md, etc.
+
+
+  
+
+
++---------------------+
+| VS Code Workspace   |
++---------------------+
+          |
+          v
++---------------------+
+| src/                |
+|---------------------|
+| function_app.py     |<-------------------+
+| agents/             |                    |
+|   code_style.py     |                    |
+|   deep_wiki.py      |                    |
+|   vector_search.py  |                    |
+| data/               |                    |
+|   cosmos_ops.py     |                    |
+| tests/              |                    |
++---------------------+                    |
+          |                                |
+          v                                |
++---------------------+                    |
+| infra/ (Bicep)      |                    |
+|---------------------|                    |
+| main.bicep          |                    |
+| app/                |                    |
+| ai/                 |                    |
+| rbac/               |                    |
+| util/               |                    |
++---------------------+                    |
+          |                                |
+          v                                |
++---------------------+                    |
+| Azure Cloud         |                    |
+|---------------------|                    |
+| Function App        |<-------------------+
+| Cosmos DB           |
+| Cognitive Services  |
+| App Insights        |
+| RBAC                |
++---------------------+
+          |
+          v
++---------------------+
+| External Integrations|
+|---------------------|
+| Logging             |
+| Secrets (os.environ)|
++---------------------+
+          |
+          v
++---------------------+
+| Configuration & Env |
+|---------------------|
+| local.settings.json |
+| generate-settings   |
++---------------------+
+          |
+          v
++---------------------+
+| Documentation       |
+|---------------------|
+| README.md           |
+| deep-wiki.md        |
++---------------------+
